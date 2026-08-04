@@ -1,9 +1,17 @@
-def ingest(path):
+from app.ingestion.parser import parse_document
+from app.ingestion.chunker import chunk_text
 
-    text=parse_document(path)
 
-    chunks=chunk(text)
+def ingest_document(path: str):
 
-    for i,c in enumerate(chunks):
+    text = parse_document(path)
 
-        store_chunk(c,i)
+    chunks = chunk_text(text)
+
+    for index, chunk in enumerate(chunks):
+
+        print(f"Chunk {index}")
+
+        # Generate embedding
+        # Store metadata
+        # Store vector

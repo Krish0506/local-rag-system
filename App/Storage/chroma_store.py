@@ -1,15 +1,15 @@
 import chromadb
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-
-CHROMA_PATH = os.getenv("CHROMA_PATH")
+from app.config.settings import settings
 
 client = chromadb.PersistentClient(
-    path=CHROMA_PATH
+    path=settings.CHROMA_PATH
 )
 
 collection = client.get_or_create_collection(
-    name="documents"
+    name=settings.CHROMA_COLLECTION
 )
+
+
+def get_collection():
+    return collection
