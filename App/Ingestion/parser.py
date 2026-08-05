@@ -1,31 +1,32 @@
 from pathlib import Path
 
-from .loaders import *
+from app.ingestion.loaders import (
+    load_csv,
+    load_docx,
+    load_excel,
+    load_pdf,
+    load_txt,
+)
+
 
 def parse_document(path):
 
-    suffix=Path(path).suffix.lower()
+    suffix = Path(path).suffix.lower()
 
-    if suffix==".pdf":
-
+    if suffix == ".pdf":
         return load_pdf(path)
 
-    elif suffix==".docx":
-
+    elif suffix == ".docx":
         return load_docx(path)
 
-    elif suffix==".csv":
-
-        return load_csv(path)
-
-    elif suffix==".xlsx":
-
-        return load_excel(path)
-
-    elif suffix==".txt":
-
+    elif suffix == ".txt":
         return load_txt(path)
 
-    else:
+    elif suffix == ".csv":
+        return load_csv(path)
 
-        raise Exception("Unsupported file")
+    elif suffix in [".xls", ".xlsx"]:
+        return load_excel(path)
+
+    else:
+        raise ValueError(f"Unsupported file type: {suffix}")

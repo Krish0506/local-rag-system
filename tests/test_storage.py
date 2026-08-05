@@ -1,39 +1,49 @@
 from sqlalchemy import text
 
 from app.storage.postgres import engine
-from app.storage.chroma_store import get_collection
+from app.storage.faiss_store import FAISSStore
 
 
 def test_postgres():
 
-    with engine.connect() as connection:
+    print("Testing PostgreSQL...")
 
-        result = connection.execute(
-            text("SELECT version();")
-        )
+    with engine.connect() as conn:
+
+        result = conn.execute(text("SELECT version();"))
 
         print(result.fetchone())
 
 
-def test_chroma():
+def test_faiss():
 
-    collection = get_collection()
+    print("Testing FAISS...")
 
-    print("Collection Name:", collection.name)
+    store = FAISSStore()
+
+    embedding = [0.0] * 1024
+
+    store.add(
+        embedding,
+        {
+            "document": "sample.pdf",
+            "chunk": 0
+        }
+    )
+
+    results = store.search(embedding)
+
+    print(results)
 
 
 if __name__ == "__main__":
-
-    print("Testing PostgreSQL...")
 
     test_postgres()
 
     print()
 
-    print("Testing ChromaDB...")
-
-    test_chroma()
+    test_faiss()
 
     print()
 
-    print("Storage layer is working!")
+    print("Storage layer working successfully.")

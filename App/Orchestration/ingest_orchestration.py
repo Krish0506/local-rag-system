@@ -1,17 +1,23 @@
-from app.ingestion.parser import parse_document
-from app.ingestion.chunker import chunk_text
+from pathlib import Path
+
+from app.config.settings import settings
+from app.ingestion.pipeline import process_document
 
 
-def ingest_document(path: str):
+def ingest_all_documents():
 
-    text = parse_document(path)
+    raw_folder = settings.raw_directory
 
-    chunks = chunk_text(text)
+    files = list(Path(raw_folder).glob("*"))
 
-    for index, chunk in enumerate(chunks):
+    print(f"\nFound {len(files)} files.\n")
 
-        print(f"Chunk {index}")
+    for file in files:
 
-        # Generate embedding
-        # Store metadata
-        # Store vector
+        print("=" * 50)
+
+        print("Processing:", file.name)
+
+        process_document(file)
+
+    print("\nAll documents processed.")

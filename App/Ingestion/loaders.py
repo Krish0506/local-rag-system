@@ -1,42 +1,54 @@
+from pathlib import Path
+
+import pandas as pd
 from PyPDF2 import PdfReader
 from docx import Document
-import pandas as pd
 
-def load_txt(path):
-
-    with open(path,encoding="utf8") as f:
-
-        return f.read()
-
-def load_excel(path):
-
-    df=pd.read_excel(path)
-
-    return df.to_string()
-
-def load_csv(path):
-
-    df=pd.read_csv(path)
-
-    return df.to_string()
-
-def load_docx(path):
-
-    doc=Document(path)
-
-    return "\n".join(
-        p.text
-        for p in doc.paragraphs
-    )
 
 def load_pdf(path):
 
-    reader=PdfReader(path)
+    reader = PdfReader(path)
 
-    text=""
+    text = ""
 
     for page in reader.pages:
 
-        text+=page.extract_text()
+        page_text = page.extract_text()
+
+        if page_text:
+
+            text += page_text + "\n"
 
     return text
+
+
+def load_docx(path):
+
+    document = Document(path)
+
+    return "\n".join(
+        paragraph.text
+        for paragraph in document.paragraphs
+    )
+
+
+def load_txt(path):
+
+    return Path(path).read_text(
+        encoding="utf-8",
+        errors="ignore"
+    )
+
+
+def load_csv(path):
+
+    dataframe = pd.read_csv(path)
+
+    return dataframe.to_string(index=False)
+
+
+def load_excel(path):
+
+    dataframe = pd.read_excel(path)
+
+    return dataframe.to_string(index=False)

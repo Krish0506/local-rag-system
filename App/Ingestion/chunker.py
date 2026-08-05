@@ -1,14 +1,16 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+from app.config.settings import settings
+
+
 splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200,
-    length_function=len
+
+    chunk_size=settings.CHUNK_SIZE,
+
+    chunk_overlap=settings.CHUNK_OVERLAP,
 )
 
 
-def chunk_text(text: str) -> list[str]:
-    """
-    Split a large document into smaller overlapping chunks.
-    """
+def chunk_text(text):
+
     return splitter.split_text(text)
