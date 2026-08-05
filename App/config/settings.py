@@ -39,6 +39,13 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    # -------------------------------
+    # Ollama
+    # -------------------------------
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    EMBEDDING_MODEL: str = "bge-m3"
+    LLM_MODEL: str = "mistral:7b-instruct"
+
     @property
     def raw_directory(self):
         return PROJECT_ROOT / self.RAW_DATA_DIR

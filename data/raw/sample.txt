@@ -1,0 +1,9 @@
+Artificial Intelligence (AI) is transforming businesses across industries.
+
+Retrieval-Augmented Generation (RAG) combines vector search with large language models.
+
+Ollama allows running models locally.
+
+FAISS is used for vector similarity search.
+
+PostgreSQL stores metadata for documents and chunks.

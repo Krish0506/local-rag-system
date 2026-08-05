@@ -48,3 +48,6 @@ streamlit
 ollama
 langchain-ollama
 
+langchain-core
+
+

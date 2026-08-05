@@ -1,29 +1,98 @@
 from pathlib import Path
 
+from app.config.settings import settings
 from app.ingestion.parser import parse_document
 from app.ingestion.cleaner import clean_text
 from app.ingestion.chunker import chunk_text
 
+from app.llm.embeddings import EmbeddingService
 
-def process_document(path):
+from app.storage.faiss_store import FAISSStore
 
-    print("Loading...")
+from app.storage.postgres import SessionLocal
 
-    text = parse_document(path)
+from app.storage.repository import Repository
 
-    print("Cleaning...")
 
-    cleaned = clean_text(text)
+class IngestionPipeline:
 
-    print("Chunking...")
+    def __init__(self):
 
-    chunks = chunk_text(cleaned)
+        self.embedding = EmbeddingService()
 
-    print(f"Generated {len(chunks)} chunks.")
+        self.vector_store = FAISSStore()
 
-    return {
+    def ingest(
 
-        "filename": Path(path).name,
+        self,
 
-        "chunks": chunks
-    }
+        file_path
+
+    ):
+
+        session = SessionLocal()
+
+        repository = Repository(session)
+
+        file = Path(file_path)
+
+        text = parse_document(file)
+
+        cleaned = clean_text(text)
+
+        chunks = chunk_text(cleaned)
+
+        document = repository.save_document(
+
+            filename=file.name,
+
+            document_type=file.suffix,
+
+            source=str(file)
+
+        )
+
+        for index, chunk in enumerate(chunks):
+
+            chunk_row = repository.save_chunk(
+
+               document_id = document.id,
+
+                chunk_index = index,
+
+                text=chunk,
+
+                embedding_model=settings.EMBEDDING_MODEL
+
+            )
+
+            embedding = self.embedding.embed(
+
+                chunk
+
+            )
+
+            self.vector_store.add(
+
+                embedding,
+
+                {
+
+                    "chunk_id": chunk_row.id,
+
+                    "document_id": document.id,
+
+                    "content": chunk
+
+                }
+
+            )
+
+        self.vector_store.save()
+
+        session.close()
+
+        print(
+
+            f"{file.name} ingested successfully."
+        )

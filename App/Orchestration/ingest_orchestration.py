@@ -1,23 +1,47 @@
 from pathlib import Path
 
 from app.config.settings import settings
-from app.ingestion.pipeline import process_document
+
+from app.ingestion.pipeline import IngestionPipeline
 
 
-def ingest_all_documents():
+class IngestOrchestrator:
 
-    raw_folder = settings.raw_directory
+    def __init__(self):
 
-    files = list(Path(raw_folder).glob("*"))
+        self.pipeline = IngestionPipeline()
 
-    print(f"\nFound {len(files)} files.\n")
+    def run(self):
 
-    for file in files:
+        files = list(
 
-        print("=" * 50)
+            Path(
 
-        print("Processing:", file.name)
+                settings.raw_directory
 
-        process_document(file)
+            ).glob("*")
+        )
 
-    print("\nAll documents processed.")
+        print(
+
+            f"Found {len(files)} files."
+        )
+
+        for file in files:
+
+            print(
+
+                f"Ingesting {file.name}"
+            )
+
+            self.pipeline.ingest(file)
+
+        print(
+
+            "\nFinished."
+        )
+
+
+if __name__ == "__main__":
+
+    IngestOrchestrator().run()
