@@ -19,6 +19,7 @@ class EmbeddingService:
 
         return self.model.embed_query(text)
 
-    def embed_documents(self, documents):
-
+    def embed_documents(self,  documents: list[str]
+    ) -> list[list[float]]:
+        
         return self.model.embed_documents(documents)

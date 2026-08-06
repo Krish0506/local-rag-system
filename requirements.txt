@@ -30,14 +30,7 @@ pydantic
 
 loguru
 
-pydantic
 pydantic-settings
-
-sqlalchemy
-
-psycopg2-binary
-
-python-dotenv
 
 faiss-cpu
 
