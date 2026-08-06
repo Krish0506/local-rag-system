@@ -125,3 +125,5 @@ Answer Returned to User
 * Cloud deployment (Azure, AWS, or GCP)
 * CI/CD pipeline
 
+
+![alt text](RAG_Architecture.png)
