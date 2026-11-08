@@ -60,7 +60,7 @@ class Settings(BaseSettings):
         if self.CHUNK_OVERLAP >= self.CHUNK_SIZE:
             raise ValueError("CHUNK_OVERLAP must be smaller than CHUNK_SIZE")
 
-        if self.APP_ENV == "production" and self.POSTGRES_PASSWORD == "postgres":
+        if self.APP_ENV == "production" and self.POSTGRES_PASSWORD in {"", "postgres"}:
             raise ValueError(
                 "POSTGRES_PASSWORD must be changed when APP_ENV=production"
             )
