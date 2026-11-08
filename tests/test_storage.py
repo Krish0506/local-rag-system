@@ -1,49 +1,61 @@
-from sqlalchemy import text
+import os
 
-from app.storage.postgres import engine
+import pytest
+
 from app.storage.faiss_store import FAISSStore
+from app.storage.postgres import check_connection
 
 
-def test_postgres():
+def test_faiss_store_round_trip(tmp_path):
+    index_path = tmp_path / "faiss.index"
 
-    print("Testing PostgreSQL...")
-
-    with engine.connect() as conn:
-
-        result = conn.execute(text("SELECT version();"))
-
-        print(result.fetchone())
-
-
-def test_faiss():
-
-    print("Testing FAISS...")
-
-    store = FAISSStore()
-
-    embedding = [0.0] * 1024
-
+    store = FAISSStore(index_path=index_path, dimension=4)
     store.add(
-        embedding,
+        [1.0, 0.0, 0.0, 0.0],
         {
-            "document": "sample.pdf",
-            "chunk": 0
-        }
+            "chunk_id": 1,
+            "document_id": 1,
+            "content": "sample",
+        },
     )
+    store.save()
 
-    results = store.search(embedding)
+    reloaded = FAISSStore(index_path=index_path, dimension=4)
+    results = reloaded.search([1.0, 0.0, 0.0, 0.0], top_k=1)
 
-    print(results)
+    assert results[0]["chunk_id"] == 1
+    assert results[0]["content"] == "sample"
 
 
-if __name__ == "__main__":
+def test_faiss_store_rejects_wrong_dimension(tmp_path):
+    store = FAISSStore(index_path=tmp_path / "faiss.index", dimension=4)
 
-    test_postgres()
+    with pytest.raises(ValueError):
+        store.add([1.0, 0.0], {})
 
-    print()
 
-    test_faiss()
+def test_faiss_store_detects_missing_metadata(tmp_path):
+    index_path = tmp_path / "faiss.index"
 
-    print()
+    store = FAISSStore(index_path=index_path, dimension=4)
+    store.add(
+        [1.0, 0.0, 0.0, 0.0],
+        {
+            "chunk_id": 1,
+            "document_id": 1,
+            "content": "sample",
+        },
+    )
+    store.save()
+    index_path.with_suffix(".pkl").unlink()
 
-    print("Storage layer working successfully.")
+    with pytest.raises(RuntimeError, match="metadata file is missing"):
+        FAISSStore(index_path=index_path, dimension=4)
+
+
+@pytest.mark.integration
+def test_database_connection():
+    if os.getenv("RUN_DB_TESTS") != "1":
+        pytest.skip("Set RUN_DB_TESTS=1 to run database integration tests")
+
+    assert check_connection() is True

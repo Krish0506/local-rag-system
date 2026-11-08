@@ -1,43 +1,63 @@
-version: "3.9"
-
 services:
 
   postgres:
     image: pgvector/pgvector:pg16
     container_name: rag_postgres
-
-    restart: always
-
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: ragdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-
+      POSTGRES_DB: ${POSTGRES_DB:-ragdb}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
-
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ragdb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   streamlit:
-
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
-
     container_name: rag_streamlit
-
+    restart: unless-stopped
+    init: true
     depends_on:
-      - postgres
-
+      postgres:
+        condition: service_healthy
     ports:
       - "8501:8501"
-
-    env_file:
-      - .env
-
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-ragdb}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL_DOCKER:-http://host.docker.internal:11434}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-bge-m3}
+      LLM_MODEL: ${LLM_MODEL:-mistral:7b-instruct}
+      CHUNK_SIZE: ${CHUNK_SIZE:-1000}
+      CHUNK_OVERLAP: ${CHUNK_OVERLAP:-200}
+      RAW_DATA_DIR: ${RAW_DATA_DIR:-data/raw}
+      PROCESSED_DATA_DIR: ${PROCESSED_DATA_DIR:-data/processed}
+      VECTOR_STORE_PATH: ${VECTOR_STORE_PATH:-data/vectors/faiss.index}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      - ./:/workspace
+      - ./data:/workspace/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   postgres_data:
