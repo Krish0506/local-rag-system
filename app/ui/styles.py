@@ -45,7 +45,12 @@ button, input, textarea, select,
 }
 
 [data-testid="stHeader"] {
-  background: var(--eip-bg);
+  /* Translucent with blur so scrolled content fades under the bar
+     instead of being cut off at a hard opaque edge. */
+  background: rgba(244, 246, 249, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--eip-border);
 }
 
 /* Hide Streamlit development chrome (Deploy button, kebab menu, run status)
@@ -58,7 +63,8 @@ button, input, textarea, select,
 
 [data-testid="stMainBlockContainer"] {
   max-width: 1200px;
-  padding-top: 1.5rem;
+  /* The fixed stHeader bar is 60px tall; 4.5rem keeps page titles clear of it. */
+  padding-top: 4.5rem;
   padding-bottom: 4.5rem;
 }
 
