@@ -1,0 +1,9 @@
+Equipment ID,System,Project,Electrical Panel,Location,Status
+AHU-A-01,HVAC,Project Alpha,MCC-A-01,Level 1 Mechanical Room,Installed
+EF-A-01,HVAC,Project Alpha,MCC-A-01,Level 1 Roof,Installed
+FCU-A-01,HVAC,Project Alpha,MCC-A-01,Level 2 Mechanical Closet,Installed
+RP-A-01,Plumbing,Project Alpha,MCC-A-02,Level 1 Basement,Installed
+WP-A-01,Plumbing,Project Alpha,MCC-A-02,Level 1 Basement,Installed
+LP-A-01,Electrical,Project Alpha,,Level 1 Electrical Room,Installed
+MCC-A-01,Electrical,Project Alpha,,Level 1 Electrical Room,Installed
+MCC-A-02,Electrical,Project Alpha,,Level 1 Electrical Room,Installed

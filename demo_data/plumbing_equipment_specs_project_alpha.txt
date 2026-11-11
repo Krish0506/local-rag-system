@@ -1,0 +1,13 @@
+Project Alpha - Plumbing Equipment Specifications (Synthetic Demonstration Data)
+
+RP-A-01 - Recirculation Pump
+- Scheduled flow rate: 40 GPM
+- Electrical panel: MCC-A-02
+- Location: Level 1 Basement
+
+WP-A-01 - Water Pump
+- Scheduled flow rate: 25 GPM
+- Electrical panel: MCC-A-02
+- Location: Level 1 Basement
+
+All equipment IDs, project names, and values are fictional and provided only for demonstration purposes.

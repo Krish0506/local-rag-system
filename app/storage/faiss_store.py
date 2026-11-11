@@ -100,6 +100,8 @@ class FAISSStore:
                     "chunk_id": self.metadata[idx]["chunk_id"],
                     "document_id": self.metadata[idx]["document_id"],
                     "content": self.metadata[idx]["content"],
+                    "filename": self.metadata[idx].get("filename"),
+                    "location": self.metadata[idx].get("location"),
                 }
             )
 

@@ -16,6 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
+COPY demo_data ./demo_data
 COPY create_tables.py ingest.py chat.py docker-entrypoint.sh ./
 
 RUN chmod +x docker-entrypoint.sh \

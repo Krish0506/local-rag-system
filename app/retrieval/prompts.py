@@ -1,48 +1,44 @@
+from app.config.settings import settings
+
+
 class PromptBuilder:
 
     @staticmethod
-    def build(
+    def build(question, chunks, max_context_chars=None):
+        limit = max_context_chars if max_context_chars is not None else settings.MAX_CONTEXT_CHARS
 
-        question,
+        sections = []
 
-        chunks
+        for index, chunk in enumerate(chunks, start=1):
+            filename = chunk.get("filename") or "Unknown document"
+            location = chunk.get("location")
 
-    ):
+            heading = f"[{index}] {filename}"
+            if location:
+                heading = f"{heading} - {location}"
 
-        context = ""
+            body = (chunk.get("content") or "").strip()
 
-        for item in chunks:
+            sections.append(f"{heading}\n{body}")
 
-            context += item["content"]
+        context = "\n\n".join(sections)
 
-            context += "\n\n"
+        if len(context) > limit:
+            context = context[:limit].rsplit("\n", 1)[0]
 
-        prompt = f"""
+        prompt = f"""You are an AI engineering assistant. Answer the question using only the numbered context below.
 
-You are an AI assistant.
+Rules:
+1. Base every statement on the context and cite it inline as [1], [2], and so on.
+2. The context may contain several documents about the same project; use them together when they clearly describe the same equipment or systems.
+3. Do not invent specifications, equipment ratings, dimensions, safety limits, warranty terms, or code requirements.
+4. If the context does not contain enough information to answer, reply exactly: The available knowledge base does not contain sufficient information.
 
-Answer ONLY using the provided context.
-
-If the answer is not contained inside the context,
-
-reply exactly:
-
-I don't know.
-
-------------------------
-
-Context
-
+Context:
 {context}
 
-------------------------
+Question: {question}
 
-Question
-
-{question}
-
-Answer
-
-"""
+Answer:"""
 
         return prompt

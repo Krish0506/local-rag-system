@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     # -------------------------------
     # Vector Store
     # -------------------------------
-    VECTOR_STORE_PATH: str = "data/vectors/faiss.index"
+    VECTOR_STORE_PATH: str = "data/vectors/demo.index"
 
     # -------------------------------
     # Chunking
@@ -42,11 +42,23 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = Field(default=200, ge=0)
 
     # -------------------------------
+    # Retrieval
+    # -------------------------------
+    RETRIEVAL_TOP_K: int = Field(default=5, ge=1, le=20)
+    MAX_CONTEXT_CHARS: int = Field(default=6000, gt=0)
+
+    # -------------------------------
     # Ollama
     # -------------------------------
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     EMBEDDING_MODEL: str = "bge-m3"
-    LLM_MODEL: str = "mistral:7b-instruct"
+    LLM_MODEL: str = "qwen3.5:4b"
+    LLM_FALLBACK_MODEL: str = "mistral:7b-instruct"
+    MAX_ANSWER_TOKENS: int = Field(default=512, gt=0)
+    MODEL_CONTEXT_CHARS: int = Field(default=4096, gt=0)
+    # Reasoning models (e.g. qwen3.5) otherwise spend the token budget on
+    # thinking before answering; disabled by default for concise grounded answers.
+    LLM_REASONING: bool = False
 
     model_config = SettingsConfigDict(
         env_file=str(PROJECT_ROOT / ".env"),

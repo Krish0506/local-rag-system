@@ -1,0 +1,17 @@
+Project Alpha - Electrical Equipment Specifications (Synthetic Demonstration Data)
+
+MCC-A-01 - Motor Control Center
+- Serves HVAC equipment: AHU-A-01, EF-A-01, FCU-A-01
+- Location: Level 1 Electrical Room
+- Voltage: 480 V, 3-phase
+
+MCC-A-02 - Motor Control Center
+- Serves plumbing equipment: RP-A-01, WP-A-01
+- Location: Level 1 Electrical Room
+- Voltage: 480 V, 3-phase
+
+LP-A-01 - Lighting Panel
+- Serves lighting and receptacle loads only
+- Location: Level 1 Electrical Room
+
+All equipment IDs, project names, and values are fictional and provided only for demonstration purposes.

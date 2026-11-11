@@ -40,12 +40,18 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL_DOCKER:-http://host.docker.internal:11434}
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-bge-m3}
-      LLM_MODEL: ${LLM_MODEL:-mistral:7b-instruct}
+      LLM_MODEL: ${LLM_MODEL:-qwen3.5:4b}
+      LLM_FALLBACK_MODEL: ${LLM_FALLBACK_MODEL:-mistral:7b-instruct}
+      LLM_REASONING: ${LLM_REASONING:-false}
+      RETRIEVAL_TOP_K: ${RETRIEVAL_TOP_K:-5}
+      MAX_CONTEXT_CHARS: ${MAX_CONTEXT_CHARS:-6000}
+      MAX_ANSWER_TOKENS: ${MAX_ANSWER_TOKENS:-512}
+      MODEL_CONTEXT_CHARS: ${MODEL_CONTEXT_CHARS:-4096}
       CHUNK_SIZE: ${CHUNK_SIZE:-1000}
       CHUNK_OVERLAP: ${CHUNK_OVERLAP:-200}
       RAW_DATA_DIR: ${RAW_DATA_DIR:-data/raw}
       PROCESSED_DATA_DIR: ${PROCESSED_DATA_DIR:-data/processed}
-      VECTOR_STORE_PATH: ${VECTOR_STORE_PATH:-data/vectors/faiss.index}
+      VECTOR_STORE_PATH: ${VECTOR_STORE_PATH:-data/vectors/demo.index}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

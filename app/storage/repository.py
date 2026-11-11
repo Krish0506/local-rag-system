@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.storage.models import Document
@@ -8,6 +9,14 @@ class Repository:
 
     def __init__(self, session: Session):
         self.session = session
+
+    # ------------------------
+    # Documents
+    # ------------------------
+
+    def document_exists(self, filename: str) -> bool:
+        statement = select(Document.id).where(Document.filename == filename)
+        return self.session.scalar(statement) is not None
 
     # ------------------------
     # Documents

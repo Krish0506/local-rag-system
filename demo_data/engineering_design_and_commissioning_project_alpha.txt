@@ -1,0 +1,13 @@
+Project Alpha - Design and Commissioning Summary (Synthetic Demonstration Data)
+
+Design intent
+- Mechanical equipment is served from MCC-A-01.
+- Plumbing equipment is served from MCC-A-02.
+- AHU-A-01 is designed for a scheduled airflow capacity of 12,500 CFM.
+
+Commissioning
+- AHU-A-01 airflow acceptance tolerance is plus or minus five percent of the scheduled value.
+- MCC-A-01 and MCC-A-02 are to be energized before mechanical equipment start-up.
+- No manufacturer warranty terms are included in this document.
+
+All project names, equipment IDs, and values are fictional and provided only for demonstration purposes.

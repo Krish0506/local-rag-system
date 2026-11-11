@@ -1,0 +1,20 @@
+Project Alpha - HVAC Equipment Specifications (Synthetic Demonstration Data)
+
+AHU-A-01 - Air Handling Unit
+- Scheduled airflow capacity: 12,500 CFM
+- Design static pressure: 1.2 in. w.g.
+- Fan type: Forward-curved centrifugal
+- Electrical panel: MCC-A-01
+- Location: Level 1 Mechanical Room
+
+EF-A-01 - Exhaust Fan
+- Scheduled airflow capacity: 3,000 CFM
+- Electrical panel: MCC-A-01
+- Location: Level 1 Roof
+
+FCU-A-01 - Fan Coil Unit
+- Scheduled airflow capacity: 1,800 CFM
+- Electrical panel: MCC-A-01
+- Location: Level 2 Mechanical Closet
+
+All equipment IDs, project names, and values are fictional and provided only for demonstration purposes.
