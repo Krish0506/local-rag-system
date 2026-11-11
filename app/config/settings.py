@@ -9,6 +9,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
+# Project version (displayed in the UI footer and System Settings page)
+APP_VERSION = "1.2.0"
+
+
 class Settings(BaseSettings):
     # -------------------------------
     # Environment

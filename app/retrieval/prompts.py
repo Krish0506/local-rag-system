@@ -1,6 +1,9 @@
 from app.config.settings import settings
 
 
+REFUSAL_MESSAGE = "The available knowledge base does not contain sufficient information."
+
+
 class PromptBuilder:
 
     @staticmethod
@@ -32,7 +35,7 @@ Rules:
 1. Base every statement on the context and cite it inline as [1], [2], and so on.
 2. The context may contain several documents about the same project; use them together when they clearly describe the same equipment or systems.
 3. Do not invent specifications, equipment ratings, dimensions, safety limits, warranty terms, or code requirements.
-4. If the context does not contain enough information to answer, reply exactly: The available knowledge base does not contain sufficient information.
+4. If the context does not contain enough information to answer, reply exactly: {REFUSAL_MESSAGE}
 
 Context:
 {context}

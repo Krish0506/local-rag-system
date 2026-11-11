@@ -1,5 +1,6 @@
 from urllib.error import URLError
 from urllib.request import urlopen
+import json
 
 from sqlalchemy import func, select
 
@@ -31,3 +32,35 @@ def knowledge_base_counts() -> tuple[int, int]:
         chunks = connection.scalar(select(func.count()).select_from(Chunk)) or 0
 
     return int(documents), int(chunks)
+
+
+def loaded_models(timeout: float = 2.0) -> list[str]:
+    """Return the model names currently loaded in Ollama memory."""
+    url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/ps"
+
+    try:
+        with urlopen(url, timeout=timeout) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (URLError, OSError, ValueError):
+        return []
+
+    names = []
+    for item in payload.get("models", []):
+        name = item.get("Model") or item.get("Name") or item.get("model") or item.get("name")
+        if not name:
+            continue
+        names.append(str(name).split("@", 1)[0])
+
+    return names
+
+
+def model_ready() -> bool:
+    """Return True when the resolved chat model is loaded in Ollama memory."""
+    active = f"{settings.LLM_MODEL}".split("@", 1)[0]
+    fallback = f"{settings.LLM_FALLBACK_MODEL}".split("@", 1)[0]
+
+    for name in loaded_models():
+        if name == active or name == fallback:
+            return True
+
+    return False

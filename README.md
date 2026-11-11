@@ -2,7 +2,7 @@
 
 A local-first Retrieval-Augmented Generation (RAG) application using PostgreSQL for document and chunk metadata, FAISS for vector search, Ollama for local embeddings and generation, and Streamlit for the user interface.
 
-> **Current phase:** Phase 0 stabilization. PostgreSQL stores metadata; FAISS stores vectors. The pgvector migration is intentionally deferred to a later phase.
+The frontend is the **Engineering Intelligence Platform** — an enterprise-styled Streamlit application with a dark navy sidebar, a light workspace, and five purpose-built pages (Overview, AI Assistant, Knowledge Base, Ingestion Pipelines, System Settings) described in the [User Interface](#user-interface) section below.
 
 ## Features
 
@@ -16,6 +16,7 @@ A local-first Retrieval-Augmented Generation (RAG) application using PostgreSQL 
 - Clear refusal when the knowledge base does not contain the answer.
 - Idempotent ingestion (re-ingesting a file is skipped, never duplicated).
 - Run locally or with Docker Compose.
+- Enterprise Streamlit UI: custom design system (`app/ui/styles.py`), reusable components (`app/ui/components.py`), and dedicated views for the dashboard, chat, document management, pipelines, and settings — all built on Streamlit-native navigation with real URL routing (`/overview`, `/ai-assistant`, `/knowledge-base`, `/ingestion-pipelines`, `/system-settings`).
 
 ## Technology Stack
 
@@ -53,7 +54,16 @@ local-rag-system/
 │   │   ├── postgres.py
 │   │   ├── repository.py
 │   │   └── faiss_store.py
-│   ├── ui/streamlit_app.py
+│   ├── ui/
+│   │   ├── streamlit_app.py
+│   │   ├── styles.py
+│   │   ├── components.py
+│   │   └── views/
+│   │       ├── overview.py
+│   │       ├── assistant.py
+│   │       ├── knowledge_base.py
+│   │       ├── pipelines.py
+│   │       └── settings.py
 │   └── health.py
 ├── data/
 │   ├── raw/
@@ -194,6 +204,28 @@ Supported formats: `.pdf`, `.docx`, `.txt`, `.csv`, `.xls`, `.xlsx`.
 
 Current limitation: Excel ingestion reads the first sheet only. Sheet-aware ingestion is planned for Phase 2.
 
+## User Interface
+
+The Streamlit app (`app/ui/streamlit_app.py`) is organized as five pages with Streamlit-native navigation, real URL routing, and a shared design system. All metrics and statuses shown in the UI come from the application's own health, repository, and retrieval functions — nothing is simulated.
+
+### Pages
+
+- **Overview** (`/overview`) — real metric cards (documents, chunks, vector count, active model, database and Ollama connections), knowledge-base summary by type, recent ingestion activity, system readiness (including index/database sync), quick navigation cards, and suggested engineering queries that open directly in the AI Assistant.
+- **AI Assistant** (`/ai-assistant`) — welcome state with four clickable suggested prompts, a model banner showing the real model name and readiness (Ready / Warming up / Offline from actual health checks), status phases while working (searching → sources found → generating → complete), grounded answers with numbered expandable source cards, copy-to-clipboard, regenerate, a confirmed "New conversation" action, empty-input protection, and friendly error messages. The deterministic refusal is preserved and highlighted with an "Insufficient evidence" banner.
+- **Knowledge Base** (`/knowledge-base`) — document metrics, upload + demo ingestion with idempotency feedback, search filtering, type filtering, refresh, a document table with real timestamps and chunk counts, and expandable file details.
+- **Ingestion Pipelines** (`/ingestion-pipelines`) — entry points for the demo document set and custom uploads, processed/skipped/failed counters, a per-file result table with status pills, the run timestamp, and session run history. Idempotency is visible ("Already ingested — not duplicated").
+- **System Settings** (`/system-settings`) — read-only panels for PostgreSQL, Ollama (including models currently in memory), the generation model, retrieval and vector index configuration, and application version. Credentials are never displayed; a model warm-up button loads the chat model on demand.
+
+### Demo flow
+
+1. Open `http://localhost:8501` (Overview shows live platform metrics).
+2. Click a suggested query, or open the AI Assistant and click one of the four suggested prompts.
+3. Review the grounded answer and its numbered source cards; try **Copy answer** and **Regenerate**.
+4. Ask *"What is the manufacturer's warranty for this equipment?"* to demonstrate the refusal banner.
+5. Ingestion Pipelines → **Run demo ingestion** to show idempotent behavior (5 skipped, 0 duplicated).
+6. Knowledge Base → search "hvac" to filter the document table.
+7. System Settings → **Warm up model now** before presenting, so the first answer is fast.
+
 ## Demonstration Documents
 
 `demo_data/` contains a small, internally consistent, entirely fictional set of MEP documents for Project Alpha:
@@ -284,12 +316,15 @@ Documents ──► parser ──► cleaner ──► chunker
 - Excel ingestion reads only the first sheet.
 - There is no authentication or role-based access control yet.
 - Conversation history is session-only (lost on page reload); there is no persistent memory.
+- Pipeline run history on the Ingestion Pipelines page is session-only by design; the backend does not persist run records.
 - Source citations are chunk-level ("part N" of the document), not page-level, for text and CSV documents.
 - The chat model runs locally; the first request after startup may take 10–15 seconds while the model loads (use the "Warm up model" button).
+- The Knowledge Base "type" filter and clipboard paste verification were verified by code path and manual spot-check respectively; synthetic browser automation could not drive the BaseWeb select dropdown or read the clipboard back (browser focus policy).
+- When the app is loaded directly on a sub-page URL (e.g. `/ai-assistant`), Streamlit's frontend requests `/_stcore/health` relative to that path and logs two harmless 404s in the browser console; the app connects normally and all functionality is unaffected.
 
 ## Roadmap
 
-1. Enterprise UI and UX (chat UI, health panel, and ingestion controls are in place).
+1. Enterprise UI and UX — **done** (Engineering Intelligence Platform: dashboard, chat, knowledge base, pipelines, settings; design system in `app/ui/styles.py`).
 2. Document management (idempotent ingestion done; delete/re-index workflows remain).
 3. Source citations done; persistent conversational memory remains.
 4. Authentication and role-based access control.
