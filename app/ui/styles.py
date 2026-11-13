@@ -54,8 +54,12 @@ button, input, textarea, select,
 }
 
 /* Hide Streamlit development chrome (Deploy button, kebab menu, run status)
-   so the header reads as product chrome rather than a dev tool. */
-[data-testid="stToolbar"],
+   so the header reads as product chrome rather than a dev tool. The toolbar
+   wrapper itself stays visible because it contains the sidebar expand
+   control (stExpandSidebarButton) that users need after collapsing the
+   sidebar. */
+[data-testid="stBaseButton-header"],
+[data-testid="stMainMenuButton"],
 [data-testid="stDecoration"],
 [data-testid="stStatusWidget"] {
   display: none !important;
