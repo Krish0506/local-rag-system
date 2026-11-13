@@ -21,11 +21,11 @@ st.set_page_config(
 
 load_css()
 
+# The default page is served at "/" (root); Streamlit ignores url_path for it.
 overview_page = st.Page(
     overview.view,
     title="Overview",
     icon=":material/space_dashboard:",
-    url_path="overview",
     default=True,
 )
 assistant_page = st.Page(

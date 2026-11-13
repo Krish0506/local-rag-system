@@ -16,7 +16,7 @@ The frontend is the **Engineering Intelligence Platform** — an enterprise-styl
 - Clear refusal when the knowledge base does not contain the answer.
 - Idempotent ingestion (re-ingesting a file is skipped, never duplicated).
 - Run locally or with Docker Compose.
-- Enterprise Streamlit UI: custom design system (`app/ui/styles.py`), reusable components (`app/ui/components.py`), and dedicated views for the dashboard, chat, document management, pipelines, and settings — all built on Streamlit-native navigation with real URL routing (`/overview`, `/ai-assistant`, `/knowledge-base`, `/ingestion-pipelines`, `/system-settings`).
+- Enterprise Streamlit UI: custom design system (`app/ui/styles.py`), reusable components (`app/ui/components.py`), and dedicated views for the dashboard, chat, document management, pipelines, and settings — all built on Streamlit-native navigation with real URL routing (Overview at `/`, plus `/ai-assistant`, `/knowledge-base`, `/ingestion-pipelines`, `/system-settings`).
 
 ## Technology Stack
 
@@ -210,7 +210,7 @@ The Streamlit app (`app/ui/streamlit_app.py`) is organized as five pages with St
 
 ### Pages
 
-- **Overview** (`/overview`) — real metric cards (documents, chunks, vector count, active model, database and Ollama connections), knowledge-base summary by type, recent ingestion activity, system readiness (including index/database sync), quick navigation cards, and suggested engineering queries that open directly in the AI Assistant.
+- **Overview** (`/`) — real metric cards (documents, chunks, vector count, active model, database and Ollama connections), knowledge-base summary by type, recent ingestion activity, system readiness (including index/database sync), quick navigation cards, and suggested engineering queries that open directly in the AI Assistant.
 - **AI Assistant** (`/ai-assistant`) — welcome state with four clickable suggested prompts, a model banner showing the real model name and readiness (Ready / Warming up / Offline from actual health checks), status phases while working (searching → sources found → generating → complete), grounded answers with numbered expandable source cards, copy-to-clipboard, regenerate, a confirmed "New conversation" action, empty-input protection, and friendly error messages. The deterministic refusal is preserved and highlighted with an "Insufficient evidence" banner.
 - **Knowledge Base** (`/knowledge-base`) — document metrics, upload + demo ingestion with idempotency feedback, search filtering, type filtering, refresh, a document table with real timestamps and chunk counts, and expandable file details.
 - **Ingestion Pipelines** (`/ingestion-pipelines`) — entry points for the demo document set and custom uploads, processed/skipped/failed counters, a per-file result table with status pills, the run timestamp, and session run history. Idempotency is visible ("Already ingested — not duplicated").
